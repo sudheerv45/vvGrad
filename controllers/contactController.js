@@ -4,6 +4,10 @@ const transporter = require('../config/nodemailer');
 const createContact = async (req, res) => {
   try {
     const { firstName, lastName, practiceName, email, phone, specialty, role, productInterest, numberOfProviders } = req.body;
+    
+    let contact = await Contact.findOne({ email });
+
+    if (!contact) {
 
     const newContact = new Contact({
       firstName,
@@ -18,7 +22,7 @@ const createContact = async (req, res) => {
     });
 
     await newContact.save();
-
+  }
     // Send confirmation email to the user
     const userMailOptions = {
       from: 'info@bluelinemd.com',
