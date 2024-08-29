@@ -39,7 +39,7 @@ BluelineMD Team`,
     // Send enquiry email to the admin
     const adminMailOptions = {
       from: 'info@bluelinemd.com',
-      to: 'itsmesudheer45@gmail.com', // Add Admin email address
+      to: 'vishnusharmabora93@gmail.com', // Add Admin email address
       subject: 'New Contact Form Submission',
       text: `A new contact form submission has been received with the following details:
 
