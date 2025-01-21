@@ -1,17 +1,3 @@
-
-//For gmail
-// const nodemailer = require('nodemailer');
-
-// const transporter = nodemailer.createTransport({
-//   service: 'smtp.office365.com',
-//   auth: {
-//     user: 'info@bluelinemd.com',
-//     pass: 'cPmOCoOu0a81sagbq_883097',
-//   },
-// });
-
-// module.exports = transporter;
-
 //for outlook
 const nodemailer = require('nodemailer');
 

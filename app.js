@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/database');
 const contactRoutes = require('./routes/contactRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 const cors = require('cors');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api', contactRoutes);
+app.use('/api/v1', applicationRoutes)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

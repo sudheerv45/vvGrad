@@ -3,22 +3,17 @@ const transporter = require('../config/nodemailer');
 
 const createContact = async (req, res) => {
   try {
-    const { firstName, lastName, practiceName, email, phone, specialty, role, productInterest, numberOfProviders } = req.body;
+    const { fullName, email, phone, message  } = req.body;
     
     let contact = await Contact.findOne({ email });
 
     if (!contact) {
 
     const newContact = new Contact({
-      firstName,
-      lastName,
-      practiceName,
+      fullName,
       email,
       phone,
-      specialty,
-      role,
-      productInterest,
-      numberOfProviders,
+      message
     });
 
     await newContact.save();
@@ -28,12 +23,12 @@ const createContact = async (req, res) => {
       from: 'info@bluelinemd.com',
       to: email,
       subject: 'Contact Form Submission Confirmation',
-      text: `Dear ${firstName},
+      text: `Dear ${fullName},
 
 Thank you for contacting us. We have received your submission and will get back to you shortly.
 
 Best regards,
-BluelineMD Team`,
+vvGrad Team`,
     };
 
     // Send enquiry email to the admin
@@ -43,16 +38,11 @@ BluelineMD Team`,
       subject: 'New Contact Form Submission',
       text: `A new contact form submission has been received with the following details:
 
-First Name: ${firstName}
-Last Name: ${lastName}
-Practice Name: ${practiceName}
+Full Name: ${fullName}
 Email: ${email}
 Phone: ${phone}
-Specialty: ${specialty}
-Role: ${role}
-Product Interest: ${productInterest}
-Number of Providers: ${numberOfProviders}`,
-    };
+Message: ${message}`,
+};
 
     // Send the emails for both user and admin
     transporter.sendMail(userMailOptions, (userError, userInfo) => {
