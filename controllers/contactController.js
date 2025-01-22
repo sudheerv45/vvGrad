@@ -20,7 +20,7 @@ const createContact = async (req, res) => {
   }
     // Send confirmation email to the user
     const userMailOptions = {
-      from: 'info@bluelinemd.com',
+      from: 'marketing@vvgrad.com',
       to: email,
       subject: 'Contact Form Submission Confirmation',
       text: `Dear ${fullName},
@@ -33,7 +33,7 @@ vvGrad Team`,
 
     // Send enquiry email to the admin
     const adminMailOptions = {
-      from: 'info@bluelinemd.com',
+      from: 'marketing@vvgrad.com',
       to: 'vishnusharmabora93@gmail.com', // Add Admin email address
       subject: 'New Contact Form Submission',
       text: `A new contact form submission has been received with the following details:
