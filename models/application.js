@@ -11,7 +11,7 @@ const applicationSchema = new mongoose.Schema(
     emailId: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     phoneNumber: {
       type: String,
