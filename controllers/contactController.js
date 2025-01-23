@@ -7,19 +7,17 @@ const createContact = async (req, res) => {
     const { fullName, email, phone, message } = req.body;
 
     // Check if the contact already exists based on email
-    let contact = await Contact.findOne({ email });
-
-    if (!contact) {
+    // let contact = await Contact.findOne({ email });
+    // if (!contact) {
       // Create a new contact entry
-      contact = new Contact({
+       const contact = new Contact({
         fullName,
         email,
         phone,
         message,
       });
-      const sudheer=  await contact.save();
-    }
-
+            await contact.save();
+    
     // Send confirmation email to the user
     const userMailOptions = {
       from: 'marketing@vvgrad.com',
@@ -43,7 +41,6 @@ const createContact = async (req, res) => {
     // Return success response
     res.status(201).json({
       message: 'Contact form submitted successfully. Confirmation email sent to user and enquiry email sent to admin.',
-      Data: sudheer
     });
   } catch (err) {
     console.error('Error creating contact:', err);
@@ -71,6 +68,6 @@ const getAllContacts = async (req, res) => {
     console.error('Error fetching contacts:', err);
     res.status(500).json({ error: err.message});
   }
-};
+ };
 
 module.exports = { createContact, getAllContacts };
