@@ -18,8 +18,10 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Message is required.'],
   },
-}, { timestamps: true });
+},
+ { 
+  timestamps: true,
+}
+ );
 
-const Contact = mongoose.model('Contact', contactSchema);
-
-module.exports = Contact;
+ module.exports = mongoose.model('Contact', contactSchema);
