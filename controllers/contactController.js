@@ -17,7 +17,7 @@ const createContact = async (req, res) => {
         phone,
         message,
       });
-      await contact.save();
+      const sudheer=  await contact.save();
     }
 
     // Send confirmation email to the user
@@ -43,6 +43,7 @@ const createContact = async (req, res) => {
     // Return success response
     res.status(201).json({
       message: 'Contact form submitted successfully. Confirmation email sent to user and enquiry email sent to admin.',
+      Data: sudheer
     });
   } catch (err) {
     console.error('Error creating contact:', err);
