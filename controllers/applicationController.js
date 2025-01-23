@@ -1,17 +1,44 @@
 const Application = require('../models/application');
- 
-// Create a new application
 const createApplication = async (req, res) => {
   try {
-    const data = req.body;
-    const application = new Application(data);
-    await application.save();
-    res.status(201).json({ success: true, application });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    const {
+      fullName,
+      emailId,
+      phoneNumber,
+      companyName,
+      experienceInYears,
+      dreamCompany,
+      topicsOfInterest,
+      occupation,
+    } = req.body;
+
+    // Validate required fields
+    if (!fullName || !emailId || !phoneNumber || !companyName || !experienceInYears || !dreamCompany || !topicsOfInterest || !occupation) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    // Create a new application entry
+    const newApplicant = new Application({
+      fullName,
+      emailId,
+      phoneNumber,
+      companyName,
+      experienceInYears,
+      dreamCompany,
+      topicsOfInterest,
+      occupation,
+    });
+
+    // Save the application to the database
+    await newApplicant.save();
+
+    res.status(201).json({ message: 'Applicant added successfully.', applicant: newApplicant });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
   }
 };
- 
+
 // Update an existing application by id
 const updateApplicationById = async (req, res) => {
     try {
