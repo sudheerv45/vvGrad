@@ -1,71 +1,75 @@
 const Contact = require('../models/contact');
-const transporter = require('../config/nodemailer'); 
+const transporter = require('../config/nodemailer');
 
+// Create a new contact
 const createContact = async (req, res) => {
   try {
-    const { fullName, email, phone, message  } = req.body;
-    
+    const { fullName, email, phone, message } = req.body;
+
+    // Check if the contact already exists based on email
     let contact = await Contact.findOne({ email });
 
     if (!contact) {
+      // Create a new contact entry
+      contact = new Contact({
+        fullName,
+        email,
+        phone,
+        message,
+      });
+      await contact.save();
+    }
 
-    const newContact = new Contact({
-      fullName,
-      email,
-      phone,
-      message
-    });
-
-    await newContact.save();
-  }
     // Send confirmation email to the user
     const userMailOptions = {
       from: 'marketing@vvgrad.com',
       to: email,
       subject: 'Contact Form Submission Confirmation',
-      text: `Dear ${fullName},
-
-Thank you for contacting us. We have received your submission and will get back to you shortly.
-
-Best regards,
-vvGrad Team`,
+      text: `Dear ${fullName},\n\nThank you for contacting us. We have received your submission and will get back to you shortly.\n\nBest regards,\nvvGrad Team`,
     };
 
-    // Send enquiry email to the admin
+    // Send notification email to the admin
     const adminMailOptions = {
       from: 'marketing@vvgrad.com',
-      to: 'vishnusharmabora93@gmail.com', // Add Admin email address
+      to: 'vishnusharmabora93@gmail.com', // admin email address
       subject: 'New Contact Form Submission',
-      text: `A new contact form submission has been received with the following details:
+      text: `A new contact form submission has been received:\n\nFull Name: ${fullName}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
+    };
 
-Full Name: ${fullName}
-Email: ${email}
-Phone: ${phone}
-Message: ${message}`,
-};
+    // Send emails (user and admin)
+    await transporter.sendMail(userMailOptions);
+    await transporter.sendMail(adminMailOptions);
 
-    // Send the emails for both user and admin
-    transporter.sendMail(userMailOptions, (userError, userInfo) => {
-      if (userError) {
-        console.error('Error sending confirmation email:', userError);
-        return res.status(500).json({ error: 'Error sending confirmation email' });
-      } else {
-        console.log('Confirmation email sent:', userInfo.response);
-
-        transporter.sendMail(adminMailOptions, (adminError, adminInfo) => {
-          if (adminError) {
-            console.error('Error sending enquiry email:', adminError);
-            return res.status(500).json({ error: 'Error sending enquiry email' });
-          } else {
-            console.log('Enquiry email sent:', adminInfo.response);
-            return res.status(201).json({ message: 'Contact form submitted successfully. Confirmation email sent to user and enquiry email sent to admin.' });
-          }
-        });
-      }
+    // Return success response
+    res.status(201).json({
+      message: 'Contact form submitted successfully. Confirmation email sent to user and enquiry email sent to admin.',
     });
   } catch (err) {
+    console.error('Error creating contact:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { createContact };
+// Get all contacts
+const getAllContacts = async (req, res) => {
+  try {
+    // Fetch all contact records from the database
+    const contacts = await Contact.find();
+
+    // Check if any contacts exist
+    if (contacts.length === 0) {
+      return res.status(404).json({ message: 'No contacts found.' });
+    }
+
+    // Return the contacts as a response
+    res.status(200).json({
+      message: 'Contacts retrieved successfully.',
+      data: contacts,
+    });
+  } catch (err) {
+    console.error('Error fetching contacts:', err);
+    res.status(500).json({ error: err.message});
+  }
+};
+
+module.exports = { createContact, getAllContacts };
