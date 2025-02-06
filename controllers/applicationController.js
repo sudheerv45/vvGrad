@@ -65,7 +65,7 @@ const createApplication = async (req, res) => {
           </ul>
           <p>We will review your application and get back to you soon.</p>
           <p>Best Regards,</p>
-          <p>Team</p>
+          <p>Team vvGrad</p>
       `
   };
 
