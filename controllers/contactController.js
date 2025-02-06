@@ -1,5 +1,6 @@
 const Contact = require('../models/contact');
 const transporter = require('../config/nodemailer');
+require ('dotenv').config();
 
 // Create a new contact
 const createContact = async (req, res) => {
@@ -20,7 +21,7 @@ const createContact = async (req, res) => {
     
     // Send confirmation email to the user
     const userMailOptions = {
-      from: 'marketing@vvgrad.com',
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Contact Form Submission Confirmation',
       text: `Dear ${fullName},\n\nThank you for contacting us. We have received your submission and will get back to you shortly.\n\nBest regards,\nvvGrad Team`,
@@ -28,8 +29,8 @@ const createContact = async (req, res) => {
 
     // Send notification email to the admin
     const adminMailOptions = {
-      from: 'marketing@vvgrad.com',
-      to: 'vishnusharmabora93@gmail.com', // admin email address
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL, // admin email address
       subject: 'New Contact Form Submission',
       text: `A new contact form submission has been received:\n\nFull Name: ${fullName}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
     };

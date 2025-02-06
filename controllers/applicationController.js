@@ -1,4 +1,16 @@
 const Application = require('../models/application');
+const nodemailer = require('nodemailer');
+require ('dotenv').config();
+
+// Configure nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.EMAIL_USER, // Your Gmail
+      pass: process.env.EMAIL_PASS  // App password (not Gmail password)
+  }
+});
+
 const createApplication = async (req, res) => {
   try {
     const {
@@ -32,11 +44,66 @@ const createApplication = async (req, res) => {
     // Save the application to the database
     await newApplicant.save();
 
-    res.status(201).json({ message: 'Applicant added successfully.', applicant: newApplicant });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
-  }
+     // Email to Applicant
+     const userMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: emailId,
+      subject: "Application Submitted Successfully",
+      html: `
+          <p>Dear ${fullName},</p>
+          <p>Thank you for applying. We have received your application.</p>
+          <p>Details:</p>
+          <ul>
+              <li><strong>Full Name:</strong> ${fullName}</li>
+              <li><strong>Email:</strong> ${emailId}</li>
+              <li><strong>Phone:</strong> ${phoneNumber}</li>
+              <li><strong>Company:</strong> ${companyName}</li>
+              <li><strong>Experience:</strong> ${experienceInYears} years</li>
+              <li><strong>Dream Company:</strong> ${dreamCompany}</li>
+              <li><strong>Topics of Interest:</strong> ${topicsOfInterest}</li>
+              <li><strong>Occupation:</strong> ${occupation}</li>
+          </ul>
+          <p>We will review your application and get back to you soon.</p>
+          <p>Best Regards,</p>
+          <p>Team</p>
+      `
+  };
+
+  // Email to Admin
+  const adminMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL, // Admin Email from .env
+      subject: "New Application Received",
+      html: `
+          <p>Admin,</p>
+          <p>A new application has been submitted.</p>
+          <p>Details:</p>
+          <ul>
+              <li><strong>Full Name:</strong> ${fullName}</li>
+              <li><strong>Email:</strong> ${emailId}</li>
+              <li><strong>Phone:</strong> ${phoneNumber}</li>
+              <li><strong>Company:</strong> ${companyName}</li>
+              <li><strong>Experience:</strong> ${experienceInYears} years</li>
+              <li><strong>Dream Company:</strong> ${dreamCompany}</li>
+              <li><strong>Topics of Interest:</strong> ${topicsOfInterest}</li>
+              <li><strong>Occupation:</strong> ${occupation}</li>
+          </ul>
+          <p>Please review the application.</p>
+          <p>Best Regards,</p>
+          <p>System Notification</p>
+      `
+  };
+
+  // Send Emails
+  await transporter.sendMail(userMailOptions);
+  await transporter.sendMail(adminMailOptions);
+
+  res.status(201).json({ message: 'Applicant added successfully and emails sent.', applicant: newApplicant });
+
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ error: 'Something went wrong. Please try again later.' });
+}
 };
 
 // Update an existing application by id
